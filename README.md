@@ -2,7 +2,22 @@
 A simple Flutter app that runs image processing code natively using C++ for efficiency. Also includes a FastAPI backend to mock a cloud-based image processor.
 
 <div style="text-align: center;">
-    <img src="figma_design.png" alt="drawing" width="400"/>
+  <img src="readme_media/figma_design.png" alt="drawing" width="400"/>
+  <p>Figma Design</p>
+</div>
+
+<br/>
+
+<div style="text-align: center;">
+  <img src="readme_media/screen_recording.gif" alt="drawing" width="300"/>
+  <p>Screen Recording</p>
+</div>
+
+<br/>
+
+<div style="text-align: center;">
+  <img src="readme_media/server.png" alt="drawing" width="300"/>
+  <p>Server</p>
 </div>
 
 ## Plan

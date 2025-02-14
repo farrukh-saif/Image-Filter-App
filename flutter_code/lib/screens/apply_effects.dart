@@ -5,6 +5,8 @@ import 'dart:io';
 import 'package:path/path.dart' as path;
 import 'package:ffi/ffi.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 enum FilterType { grayscale, sharpen, blur, edges }
 
@@ -95,6 +97,35 @@ class ImageProcessor {
       calloc.free(outputPathPointer);
     }
   }
+
+  static Future<Uint8List?> applyEdgeDetection(Uint8List imageBytes) async {
+    try {
+      // Create multipart request
+      var uri = Uri.parse('http://10.0.2.2:8000/process-image/');
+      var request = http.MultipartRequest('POST', uri);
+      
+      // Add the image file to the request
+      request.files.add(
+        http.MultipartFile.fromBytes(
+          'file',
+          imageBytes,
+          filename: 'image.jpg',
+        ),
+      );
+
+      // Send the request
+      var response = await request.send();
+      var responseData = await response.stream.toBytes();
+      var jsonResponse = json.decode(utf8.decode(responseData));
+
+      // Decode the base64 image
+      String base64String = jsonResponse['processed_image'];
+      return base64Decode(base64String);
+    } catch (e) {
+      print('Error in edge detection: $e');
+      return null;
+    }
+  }
 }
 
 class ApplyEffectsScreen extends StatefulWidget {
@@ -128,6 +159,17 @@ class _ApplyEffectsScreenState extends State<ApplyEffectsScreen> {
         return ImageProcessor.applyBlur(inputPath, outputPath);
       case FilterType.sharpen:
         return ImageProcessor.applySharpen(inputPath, outputPath);
+      case FilterType.edges:
+        // Handle edge detection differently since it uses API
+        final currentImageBytes = _imageHistory[_currentHistoryIndex];
+        final processedImageBytes = await ImageProcessor.applyEdgeDetection(currentImageBytes);
+        
+        if (processedImageBytes != null) {
+          // Save the processed image
+          await File(outputPath).writeAsBytes(processedImageBytes);
+          return true;
+        }
+        return false;
       default:
         return false;
     }
