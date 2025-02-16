@@ -100,7 +100,8 @@ class ImageProcessor {
 
   static Future<Uint8List?> applyEdgeDetection(Uint8List imageBytes) async {
     try {
-      // Create multipart request
+      // Create a multipart request. Note: Uses 10.0.2.2 instead of 127.0.0.1 because the emulator routes 127.0.0.1 to itself,
+      // whereas 10.0.2.2 is forwarded to 127.0.0.1 on the host machine.
       var uri = Uri.parse('http://10.0.2.2:8000/process-image/');
       var request = http.MultipartRequest('POST', uri);
       
