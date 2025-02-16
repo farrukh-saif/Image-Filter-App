@@ -13,7 +13,7 @@ async def process_image(file: UploadFile = File(...)):
     contents = await file.read()
     image = np.array(Image.open(io.BytesIO(contents)).convert("RGB"))
 
-    # Apply edge detection filter
+    # We're gonna use the Canny Edge detection filter - Need to convert to grayscale first
     gray = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
     edges = cv2.Canny(gray, 100, 200)
 
@@ -23,5 +23,4 @@ async def process_image(file: UploadFile = File(...)):
 
     return {"processed_image": base64_str}
 
-if __name__ == "__main__":
-    uvicorn.run(app, host="127.0.0.1", port=8000)
+uvicorn.run(app, host="127.0.0.1", port=8000)

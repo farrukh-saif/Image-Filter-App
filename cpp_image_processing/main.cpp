@@ -3,51 +3,63 @@
 #include <cstring>
 
 extern "C" {
+    bool applyGrayscaleFilter(const char* inputPath, const char* outputPath) {
+        cv::Mat image = cv::imread(inputPath);
+        // Silently fails if image not found
+        if (image.empty()) {
+            return false;
+        }
 
-bool applyGrayscaleFilter(const char* inputPath, const char* outputPath) {
-    cv::Mat image = cv::imread(inputPath);
-    if (image.empty()) {
-        return false;
+        cv::Mat grayImage;
+        cv::cvtColor(image, grayImage, cv::COLOR_BGR2GRAY);
+        // Saves grayImage to outputPath
+        return cv::imwrite(outputPath, grayImage);
     }
 
-    cv::Mat grayImage;
-    cv::cvtColor(image, grayImage, cv::COLOR_BGR2GRAY);
+    bool applyBlurFilter(const char* inputPath, const char* outputPath) {
+        cv::Mat image = cv::imread(inputPath);
+        if (image.empty()) {
+            return false;
+        }
 
-    return cv::imwrite(outputPath, grayImage);
-}
+        cv::Mat blurredImage;
 
-bool applyBlurFilter(const char* inputPath, const char* outputPath) {
-    cv::Mat image = cv::imread(inputPath);
-    if (image.empty()) {
-        return false;
+        // Obviously I could just use the Greyscale filter but how else could I flex
+        // me having taken Computer Vision in uni
+        cv::Mat kernel = (cv::Mat_<float>(5,5) <<
+        0.04, 0.04, 0.04, 0.04, 0.04,
+        0.04, 0.04, 0.04, 0.04, 0.04,
+        0.04, 0.04, 0.04, 0.04, 0.04,
+        0.04, 0.04, 0.04, 0.04, 0.04,
+        0.04, 0.04, 0.04, 0.04, 0.04);
+
+        cv::filter2D(image, blurredImage, -1, kernel);
+
+        return cv::imwrite(outputPath, blurredImage);
     }
 
-    cv::Mat blurredImage;
-    // Apply Gaussian blur with 5x5 kernel
-    cv::GaussianBlur(image, blurredImage, cv::Size(5, 5), 0);
+    bool applySharpenFilter(const char* inputPath, const char* outputPath) {
+        cv::Mat image = cv::imread(inputPath);
+        if (image.empty()) {
+            return false;
+        }
 
-    return cv::imwrite(outputPath, blurredImage);
-}
-
-bool applySharpenFilter(const char* inputPath, const char* outputPath) {
-    cv::Mat image = cv::imread(inputPath);
-    if (image.empty()) {
-        return false;
-    }
-
-    cv::Mat sharpened;
-    cv::Mat blurred;
-    
-    // Create sharpening kernel
-    cv::Mat kernel = (cv::Mat_<float>(3,3) <<
+        cv::Mat sharpened;
+        
+        // We're gonna convolve the image with a sharpening kernel
+        cv::Mat kernel = (cv::Mat_<float>(3,3) <<
         -1, -1, -1,
-        -1,  9, -1,
+        -1, 9, -1,
         -1, -1, -1);
-    
-    // Apply the sharpening kernel
-    cv::filter2D(image, sharpened, -1, kernel);
+        
+        // Apply the sharpening kernel
+        cv::filter2D(image, sharpened, -1, kernel);
 
-    return cv::imwrite(outputPath, sharpened);
+        return cv::imwrite(outputPath, sharpened);
+    }
 }
 
-}
+// For quick tests: 
+// int main() {
+//     applyBlurFilter("input.jpg", "output.jpg");
+// }

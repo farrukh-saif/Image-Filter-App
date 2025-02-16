@@ -47,7 +47,7 @@ A REST API with only one method (Edge Detection) that returns an edited image.
 
 ## How to run
 
-No need to worry about the C++ code, as the generated library is already included in the Flutter folder.
+No need to worry about the C++ code, as the generated library is already included in the Flutter folder. 
 
 ### Server
 You can create a virtual environment if you don't wanna affect your host.
@@ -79,3 +79,7 @@ To run the Flutter app on an Android device or emulator, follow these steps:
   ```
   flutter run
   ```
+
+## Editing the image processing code
+
+To modify the C++ code, make your changes and then run `make` inside the `cpp_image_processing` folder. Afterward, copy the `jniLibs` folder and replace the `jniLibs` folder in `flutter_code/android/app/src/main`.
