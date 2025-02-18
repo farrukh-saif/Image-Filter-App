@@ -1,13 +1,12 @@
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'apply_effects.dart';
+
 
 class PhotoSelectScreen extends StatelessWidget {
-  final Function(Uint8List) onImageSelected;
-
   const PhotoSelectScreen({
     super.key,
-    required this.onImageSelected,
   });
 
   Future<void> _pickImage(BuildContext context) async {
@@ -20,7 +19,14 @@ class PhotoSelectScreen extends StatelessWidget {
       
       if (image != null) {
         final Uint8List bytes = await image.readAsBytes();
-        onImageSelected(bytes);
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ApplyEffectsScreen(
+              imageBytes: bytes,
+            ),
+          ),
+        );
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(

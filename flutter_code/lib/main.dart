@@ -23,37 +23,10 @@ class MyApp extends StatelessWidget {
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
-  void _navigateToApplyEffects(BuildContext context, Uint8List imageBytes) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => ApplyEffectsScreen(
-          imageBytes: imageBytes,
-          onBack: () => Navigator.pop(context),
-          onDone: (resultBytes) => _navigateToFinalResult(context, resultBytes),
-        ),
-      ),
-    );
-  }
-
-  void _navigateToFinalResult(BuildContext context, Uint8List resultBytes) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => FinalResultScreen(
-          imageBytes: resultBytes,
-          onHomePressed: () => Navigator.popUntil(context, (route) => route.isFirst),
-        ),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: PhotoSelectScreen(
-        onImageSelected: (imageBytes) => _navigateToApplyEffects(context, imageBytes),
-      ),
+      body: PhotoSelectScreen(),
     );
   }
 }

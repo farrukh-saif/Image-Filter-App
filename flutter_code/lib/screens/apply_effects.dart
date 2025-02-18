@@ -7,6 +7,7 @@ import 'package:ffi/ffi.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'final_result.dart';
 
 enum FilterType { grayscale, sharpen, blur, edges }
 
@@ -131,15 +132,11 @@ class ImageProcessor {
 
 class ApplyEffectsScreen extends StatefulWidget {
   final Uint8List imageBytes;
-  final VoidCallback onBack; // Add this
-  final Function(Uint8List) onDone; // Add this
   
 
   const ApplyEffectsScreen({
     super.key,
     required this.imageBytes,
-    required this.onBack,
-    required this.onDone, // Add this
   });
 
   @override
@@ -191,7 +188,7 @@ class _ApplyEffectsScreenState extends State<ApplyEffectsScreen> {
         backgroundColor: const Color(0xFFD9CAB3), // Match background
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_rounded, color: Colors.black),
-          onPressed: widget.onBack,
+          onPressed: () => Navigator.pop(context),
         ),
         centerTitle: true,
         title: Row(
@@ -276,15 +273,22 @@ class _ApplyEffectsScreenState extends State<ApplyEffectsScreen> {
           ),
           const SizedBox(width: 8),
           ElevatedButton(
-        onPressed: () => widget.onDone(_imageHistory[_currentHistoryIndex]),
-        style: ElevatedButton.styleFrom(
-          padding: EdgeInsets.zero,
-          backgroundColor: const Color(0xFF212121),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
-          ),
-        ),
-        child: const Text('Done', style: TextStyle(color: Colors.white, fontSize: 16)),
+            onPressed: () => {Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => FinalResultScreen(
+                  imageBytes: _imageHistory[_currentHistoryIndex],
+                ),
+              ),
+            )},
+            style: ElevatedButton.styleFrom(
+              padding: EdgeInsets.zero,
+              backgroundColor: const Color(0xFF212121),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
+            ),
+            child: const Text('Done', style: TextStyle(color: Colors.white, fontSize: 16)),
           ),
           const SizedBox(width: 8),
         ],
