@@ -1,7 +1,9 @@
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'apply_effects.dart';
+
+//Conditional import
+import 'apply_effects_native.dart' if (dart.library.html) 'apply_effects_web.dart';
 
 
 class PhotoSelectScreen extends StatelessWidget {
